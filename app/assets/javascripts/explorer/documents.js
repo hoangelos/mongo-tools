@@ -63,10 +63,10 @@ var bsonEval = function (bson) {
 $(function() {
     
   var doneTypingInterval = 650;  //time in ms
+  var typingTimer;               //timer identifier
   
   $('.formatted').each(function() {
     var $this = $(this);
-    var typingTimer;      //timer identifier
 
     var field = CodeMirror.fromTextArea(this, {
         readOnly: $this.is('.readonly'),
@@ -80,9 +80,10 @@ $(function() {
         onKeyEvent: function(e , s){
           if (s.type == "keyup")
           {
+            if (typingTimer) {
+              clearTimeout(typingTimer);
+            };
             typingTimer = setTimeout(validateJSON, doneTypingInterval);  
-          } else if (s.type == "keydown") {
-            clearTimeout(typingTimer);
           }
         }
     });
@@ -107,9 +108,7 @@ $(function() {
         $('.btn-primary').addClass("disabled");
         $('.btn-primary').attr('disabled', 'disabled');
         //Only display the error message once, until cleared
-        if($('div.alert').length == 0) {
-          flash($this.closest('form'), 'error', '<strong>Error!</strong> Document is Invalid.');
-        }
+        flash($this.closest('form'), 'error', '<strong>Error!</strong> Document is Invalid.');
       }       
     };
 
